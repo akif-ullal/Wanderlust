@@ -1,0 +1,232 @@
+/* for nav bar */
+.navbar{
+    height: 5rem !important;
+    width:100%;
+    background-color: rgb(178, 176, 176);
+}
+
+.nav-link{
+    font-size: 1.2rem !important;
+    color: black;
+}
+
+.newlist{
+    margin-right: 1rem !important;
+}
+
+.fa-regular{
+    font-size: 2rem !important;
+}
+
+.nav-icon{
+    text-decoration: none;
+    color : red
+}
+
+/* footer */
+
+
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  
+}
+
+.content {
+    flex:1;
+}
+
+.page-content {
+  padding: 1rem 2rem 2rem 3rem;
+}
+
+.list-heading{
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+}
+
+.footer{
+    height: 5rem;
+    width: 100% !important;
+    background-color: #e9ecef;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.f-companyName a{
+    text-decoration: none;
+    color:black;
+    font-size: 0.7rem;
+}
+
+.f-icons a{
+    color: black;
+}
+.f-icons{
+    margin-top: 0.2rem;
+}
+.terms a{
+    text-decoration: none;
+    color: black;
+    font-size: 0.7rem;
+}
+
+/* styling listing page */
+.listing-card{
+    border: none !important;
+    margin: 1rem 0.5rem 1.5rem 0.5rem;
+}
+
+.card-img-top{
+    border-radius: 1rem !important;
+    width: 100%;
+    object-fit: cover;
+}
+
+.card-body{
+    padding:0;
+    font-weight: 400;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.card a{
+    text-decoration: none;
+    color: black;
+}
+
+.card-img-overlay{
+    opacity: 0;
+}
+
+.card-img-overlay:hover{
+    background-color:white;
+    opacity: 0.2;
+}
+
+.list-content {  
+  margin: 2rem 0 0 3rem  !important;
+  padding: 0 1rem;
+}
+
+
+
+/* show list */
+.btns{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start; 
+    
+}
+
+.updateBtn .btn{
+    background-color: red;
+    color: white;
+    border:0;
+}
+
+.deleteBtn .btn{
+    background-color: black;
+    color: white;
+    border:0;
+}
+
+.updateBtn{
+    margin-right: 2.5rem;
+}
+
+.review-body{
+    height: 10.625rem;
+}
+
+/* add list */
+.custom-btn{
+    background-color: red;
+    color: white;
+    border: 0;
+}
+
+.ogImage{
+    width: 18.75rem!important;
+    height: 9.375rem !important;
+}
+
+#map {
+    height: 400px;
+    width: 100%;
+    }
+
+/* filters */
+.filters-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.filter-icon {
+  font-size: 1rem;
+  margin-right: 1.5rem;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.filter-icon:hover {
+  color: #ff5a5f;
+}
+
+.filter-text {
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+  margin-right: 1.5rem;
+  text-align: center;
+}
+
+.toggle-switch{
+    border: 1px solid black;
+    border-radius: 1rem;
+    padding: 1rem ;
+    width: 16rem;
+    height: 3.5rem;
+    margin-left: 2.5rem;
+    margin-bottom: 1rem;
+    
+}
+
+.form-check-input,.form-check-label{
+    cursor: pointer !important;
+}
+
+
+.gst{
+    display: none;
+}
+
+.search-bar .form-control{
+    width: 350px;
+    border-radius: 2.5rem !important;
+}
+
+.search-btn{
+    display: inline-flex;      
+    align-items: center;       
+    gap: 6px;
+    background-color: red;
+    border-radius: 2.5rem;
+}
+
+.search-btn:hover{
+    background-color: red;
+}
+
+.search-price{
+    width:150px !important;
+}
+
+.search-price::placeholder{
+    font-size: 0.8rem;
+}
