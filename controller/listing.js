@@ -1,6 +1,6 @@
 const Listing = require("../models/listing");
 const ExpressError = require("../utils/ExpressError");
-const fetch = require("node-fetch");git add .
+const fetch = require("node-fetch");
 const express = require("express");
 const methodOverride = require("method-override");
 const app = express();
@@ -8,26 +8,29 @@ app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+const axios = require("axios");
+
 async function geocodeAddress(place) {
   try {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}&limit=1`;
+    const apiKey = process.env.OPENCAGE_KEY; // store key in .env
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(place)}&key=${apiKey}&limit=1`;
 
-    const response = await fetch(url);
+    const response = await axios.get(url);
 
-    if(!response.ok){
-      throw new ExpressError(500,"Geocoding API failed");
+    if (!response.data || !response.data.results || response.data.results.length === 0) {
+      console.warn("Location not found:", place);
+      return null;
     }
 
-    const data = await response.json();
+    // Return the first result
+    return {
+      lat: response.data.results[0].geometry.lat,
+      lon: response.data.results[0].geometry.lng
+    };
 
-    if(!data || data.length === 0){
-      throw new ExpressError(400,"Location not found");
-    }
-
-    return data[0];
-
-  } catch(err){
-    throw new ExpressError(500,"Error while fetching location");
+  } catch (err) {
+    console.error("OpenCage geocoding error:", err);
+    return null;
   }
 }
 
@@ -44,48 +47,52 @@ module.exports.index=async(req,res,next)=>{
   res.render("listing/listing.ejs",{listing});
 };
 
-module.exports.addNewList=async(req,res,next)=>{
-  
-  // 3️⃣ Geocoding function
-    const place = req.body.listing.location// must come from a POST form
-    console.log(place);
-    let newResponse = null;
-
-
-    if (place) {
-      // ✅ Call server-side geocoding
-      newResponse = await geocodeAddress(place);
-      console.log(newResponse);
-      if (newResponse) {
-        console.log("Latitude:", newResponse.lat);
-        console.log("Longitude:", newResponse.lon);
-      } else {
-        console.log("Location not found");
-      }
+module.exports.addNewList = async (req, res, next) => {
+  try {
+    if (!req.body || !req.body.listing) {
+      return next(new ExpressError(403, "Listing data missing"));
     }
 
+    const place = req.body.listing.location;
+    let geocodeResult = null;
 
-  if(!req.body || !req.body.listing)
-  {
-    return next(new ExpressError(403,"page not found"));
+    if (place) {
+      geocodeResult = await geocodeAddress(place);
+      if (!geocodeResult) {
+        console.warn("Geocoding failed, using fallback coordinates");
+        geocodeResult = { lat: 0, lon: 0 }; // fallback coordinates
+      }
+    } else {
+      geocodeResult = { lat: 0, lon: 0 }; // fallback if no location provided
+    }
+
+    // Create new listing
+    const list = new Listing(req.body.listing);
+    list.owner = req.user._id;
+
+    // Handle image upload
+    if (req.file) {
+      list.image = {
+        filename: req.file.filename,
+        url: req.file.path
+      };
+    }
+
+    // Set geometry
+    list.geometry = {
+      type: "Point",
+      coordinates: [Number(geocodeResult.lon), Number(geocodeResult.lat)]
+    };
+
+    await list.save();
+
+    req.flash("success", "New listing added successfully");
+    res.redirect("/listing");
+
+  } catch (err) {
+    console.error("Error in addNewList:", err);
+    next(new ExpressError(500, "Something went wrong while adding listing"));
   }
-
-  console.log(req.file);
-  let list = new Listing(req.body.listing);
-  list.owner = req.user._id;
-  
-  let url=req.file.path;
-  let filename=req.file.filename;
-
-  list.geometry = {
-  type: "Point",
-  coordinates: [Number(newResponse.lon), Number(newResponse.lat)],
-  };
-
-  list.image={filename,url};
-  await list.save();
-  req.flash("success","new List is added");
-  res.redirect("/listing");
 };
 
 module.exports.showList=async(req,res,next)=>{
