@@ -9,15 +9,26 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 async function geocodeAddress(place) {
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`;
-  const response = await fetch(url, {
-        headers: {
-          "User-Agent": "wanderlust-app"
-          }
-        });
-  const data = await response.json();
-  // console.log(data);
-  return data[0]; // first result
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}&limit=1`;
+
+    const response = await fetch(url);
+
+    if(!response.ok){
+      throw new ExpressError(500,"Geocoding API failed");
+    }
+
+    const data = await response.json();
+
+    if(!data || data.length === 0){
+      throw new ExpressError(400,"Location not found");
+    }
+
+    return data[0];
+
+  } catch(err){
+    throw new ExpressError(500,"Error while fetching location");
+  }
 }
 
 module.exports.renderNewForm=(req,res)=>{
@@ -68,7 +79,7 @@ module.exports.addNewList=async(req,res,next)=>{
 
   list.geometry = {
   type: "Point",
-  coordinates: [newResponse.lon,  newResponse.lat],
+  coordinates: [Number(newResponse.lon), Number(newResponse.lat)],
   };
 
   list.image={filename,url};
